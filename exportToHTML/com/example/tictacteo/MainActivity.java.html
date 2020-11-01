@@ -1,0 +1,118 @@
+<html>
+<head>
+<title>MainActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000080; font-weight: bold;}
+.s1 { color: #000000;}
+.s2 { color: #808080; font-style: italic;}
+.s3 { color: #0000ff;}
+.s4 { color: #008000; font-weight: bold;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span>com.example.tictacteo;
+
+<span class="s0">import </span>androidx.appcompat.app.AppCompatActivity;
+<span class="s0">import </span>android.os.Bundle;
+<span class="s0">import </span>android.view.View;
+<span class="s0">import </span>android.widget.ImageView;
+<span class="s0">import </span>android.widget.TextView;
+
+<span class="s0">public class </span>MainActivity <span class="s0">extends </span>AppCompatActivity {
+    <span class="s0">boolean </span>gameActive = <span class="s0">true</span>;
+    <span class="s2">// Player representation</span>
+    <span class="s2">// 0 - X</span>
+    <span class="s2">// 1 - O</span>
+    <span class="s0">int </span>activePlayer = <span class="s3">0</span>;
+    <span class="s0">int</span>[] gameState = {<span class="s3">2</span>, <span class="s3">2 </span>, <span class="s3">2</span>, <span class="s3">2</span>, <span class="s3">2</span>, <span class="s3">2</span>, <span class="s3">2</span>, <span class="s3">2</span>, <span class="s3">2</span>};
+    <span class="s2">//    State meanings:</span>
+    <span class="s2">//    0 - X</span>
+    <span class="s2">//    1 - O</span>
+    <span class="s2">//    2 - Null</span>
+    <span class="s0">int</span>[][] winPositions = {{<span class="s3">0</span>,<span class="s3">1</span>,<span class="s3">2</span>}, {<span class="s3">3</span>,<span class="s3">4</span>,<span class="s3">5</span>}, {<span class="s3">6</span>,<span class="s3">7</span>,<span class="s3">8</span>},
+            {<span class="s3">0</span>,<span class="s3">3</span>,<span class="s3">6</span>}, {<span class="s3">1</span>,<span class="s3">4</span>,<span class="s3">7</span>}, {<span class="s3">2</span>,<span class="s3">5</span>,<span class="s3">8</span>},
+            {<span class="s3">0</span>,<span class="s3">4</span>,<span class="s3">8</span>}, {<span class="s3">2</span>,<span class="s3">4</span>,<span class="s3">6</span>}};
+    <span class="s0">public void </span>playerTap(View view){
+        ImageView img = (ImageView) view;
+        <span class="s0">int </span>tappedImage = Integer.parseInt(img.getTag().toString());
+        <span class="s0">if</span>(!gameActive){
+            gameReset(view);
+        }
+        <span class="s0">if</span>(gameState[tappedImage] == <span class="s3">2</span>) {
+            gameState[tappedImage] = activePlayer;
+            img.setTranslationY(-<span class="s3">1000f</span>);
+            <span class="s0">if </span>(activePlayer == <span class="s3">0</span>) {
+                img.setImageResource(R.drawable.x);
+                activePlayer = <span class="s3">1</span>;
+                TextView status = findViewById(R.id.status);
+                status.setText(<span class="s4">&quot;O's Turn - Tap to play&quot;</span>);
+            } <span class="s0">else </span>{
+                img.setImageResource(R.drawable.o);
+                activePlayer = <span class="s3">0</span>;
+                TextView status = findViewById(R.id.status);
+                status.setText(<span class="s4">&quot;X's Turn - Tap to play&quot;</span>);
+            }
+            img.animate().translationYBy(<span class="s3">1000f</span>).setDuration(<span class="s3">300</span>);
+        }
+        <span class="s2">// Check if any player has won</span>
+        <span class="s0">for</span>(<span class="s0">int</span>[] winPosition: winPositions){
+            <span class="s0">if</span>(gameState[winPosition[<span class="s3">0</span>]] == gameState[winPosition[<span class="s3">1</span>]] &amp;&amp;
+                    gameState[winPosition[<span class="s3">1</span>]] == gameState[winPosition[<span class="s3">2</span>]] &amp;&amp;
+                    gameState[winPosition[<span class="s3">0</span>]]!=<span class="s3">2</span>){
+                <span class="s2">// Somebody has won! - Find out who!</span>
+                String winnerStr;
+                gameActive = <span class="s0">false</span>;
+                <span class="s0">if</span>(gameState[winPosition[<span class="s3">0</span>]] == <span class="s3">0</span>){
+                    winnerStr = <span class="s4">&quot;X has won&quot;</span>;
+                }
+                <span class="s0">else</span>{
+                    winnerStr = <span class="s4">&quot;O has won&quot;</span>;
+                }
+                <span class="s2">// Update the status bar for winner announcement</span>
+                TextView status = findViewById(R.id.status);
+                status.setText(winnerStr);
+
+            }
+
+
+
+        }
+
+    }
+
+    <span class="s0">public void </span>gameReset(View view) {
+        gameActive = <span class="s0">true</span>;
+        activePlayer = <span class="s3">0</span>;
+        <span class="s0">for</span>(<span class="s0">int </span>i=<span class="s3">0</span>; i&lt;gameState.length; i++){
+            gameState[i] = <span class="s3">2</span>;
+        }
+        ((ImageView)findViewById(R.id.imageView0)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView1)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView2)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView3)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView4)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView5)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView6)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView7)).setImageResource(<span class="s3">0</span>);
+        ((ImageView)findViewById(R.id.imageView8)).setImageResource(<span class="s3">0</span>);
+
+        TextView status = findViewById(R.id.status);
+        status.setText(<span class="s4">&quot;X's Turn - Tap to play&quot;</span>);
+
+    }
+
+    @Override
+    <span class="s0">protected void </span>onCreate(Bundle savedInstanceState) {
+        <span class="s0">super</span>.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+</pre>
+</body>
+</html>
